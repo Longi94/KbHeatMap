@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
 
@@ -7,9 +10,29 @@ namespace KbHeatMap.Service
 {
     public class KeyboardService
     {
-        private Dictionary<Keys, int> _pressCount = new Dictionary<Keys, int>();
+        private const string FileName = "data.json";
+        private readonly Dictionary<Keys, int> _pressCount;
 
-        private IKeyboardMouseEvents  _globalHook;
+        private IKeyboardMouseEvents _globalHook;
+
+        public KeyboardService()
+        {
+            if (File.Exists(FileName))
+            {
+                var tempDict = new JavaScriptSerializer()
+                    .Deserialize<Dictionary<string, int>>(File.ReadAllText(FileName));
+
+                _pressCount = tempDict.ToDictionary(k =>
+                {
+                    Enum.TryParse(k.Key, out Keys key);
+                    return key;
+                }, k => k.Value);
+            }
+            else
+            {
+                _pressCount = new Dictionary<Keys, int>();
+            }
+        }
 
         public void Subscribe()
         {
@@ -35,6 +58,12 @@ namespace KbHeatMap.Service
             {
                 _pressCount[e.KeyCode]++;
             }
+        }
+
+        public void Save()
+        {
+            File.WriteAllText(FileName, new JavaScriptSerializer().Serialize(
+                _pressCount.ToDictionary(k => k.Key.ToString(), k => k.Value)));
         }
     }
 }

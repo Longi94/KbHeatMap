@@ -52,6 +52,7 @@ namespace KbHeatMap
         private void OnExit(object sender, ExitEventArgs e)
         {
             ChromaService.UnInitialize();
+            KeyboardService.Save();
             KeyboardService.Unsubscribe();
             _notifyIcon.Dispose();
         }
