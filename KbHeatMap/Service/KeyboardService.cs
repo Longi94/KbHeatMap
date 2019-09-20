@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Gma.System.MouseKeyHook;
 using KbHeatMap.Model;
 using KbHeatMap.Utils;
@@ -23,10 +23,13 @@ namespace KbHeatMap.Service
 
         private IKeyboardMouseEvents _globalHook;
 
-        private Grid _grid = new Grid();
+        private readonly Grid _grid = new Grid();
+
+        private readonly System.Timers.Timer _saveTimer = new System.Timers.Timer { Interval = 18000000 };
 
         public KeyboardService(ChromaService chromaService)
         {
+            _saveTimer.Elapsed += SaveTimerOnElapsed;
             _chromaService = chromaService;
             _chromaService.SdkInit += ChromaServiceOnSdkInit;
             if (File.Exists(FileName))
@@ -46,6 +49,11 @@ namespace KbHeatMap.Service
             {
                 _pressCount = new Dictionary<Constants.Key, int>();
             }
+        }
+
+        private void SaveTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            Save();
         }
 
         private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
