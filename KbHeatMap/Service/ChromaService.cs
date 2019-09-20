@@ -30,6 +30,7 @@ namespace KbHeatMap.Service
         /// Event fired when the SDK is initialized or uninitialized.
         /// </summary>
         public event EventHandler<SdkInitEvent> SdkInit;
+        public event EventHandler<SdkUnInitEvent> SdkUnInit;
 
         public bool Initialized { get; private set; }
 
@@ -103,7 +104,7 @@ namespace KbHeatMap.Service
             {
                 Initialized = false;
 
-                SdkInit?.Invoke(this, new SdkInitEvent { Initialized = Initialized });
+                SdkUnInit?.Invoke(this, new SdkUnInitEvent());
                 if (response.IsSuccessful && response.Data.Result == 0)
                 {
                     Console.WriteLine("Uninitialized Chroma SDK");
@@ -211,6 +212,10 @@ namespace KbHeatMap.Service
     public class SdkInitEvent : EventArgs
     {
         public bool Initialized;
+    }
+
+    public class SdkUnInitEvent : EventArgs
+    {
     }
 
     internal class InitResponse

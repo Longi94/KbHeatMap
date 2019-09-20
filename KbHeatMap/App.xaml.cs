@@ -38,8 +38,20 @@ namespace KbHeatMap
 
             CreateContextMenu();
 
+            ChromaService.SdkInit += ChromaServiceOnSdkInit;
+
             KeyboardService.Subscribe();
             ChromaService.Initialize();
+        }
+
+        private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
+        {
+            if (!e.Initialized)
+            {
+                // Try again...
+                System.Threading.Thread.Sleep(5000);
+                ChromaService.Initialize();
+            }
         }
 
         /// <summary>
