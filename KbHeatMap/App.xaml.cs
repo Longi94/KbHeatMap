@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Forms;
+using KbHeatMap.Service;
 
 namespace KbHeatMap
 {
@@ -13,6 +14,8 @@ namespace KbHeatMap
         /// </summary>
         private NotifyIcon _notifyIcon;
 
+        public readonly ChromaService ChromaService = new ChromaService();
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -25,6 +28,8 @@ namespace KbHeatMap
             };
 
             CreateContextMenu();
+
+            ChromaService.Initialize();
         }
 
         /// <summary>
@@ -39,13 +44,18 @@ namespace KbHeatMap
             _notifyIcon.ContextMenuStrip = menu;
         }
 
+        private void OnExit(object sender, ExitEventArgs e)
+        {
+            ChromaService.UnInitialize();
+            _notifyIcon.Dispose();
+        }
+
         /// <summary>
         /// Close the windows and remove the notification icon.
         /// </summary>
         private void ExitApp()
         {
             Current.Shutdown();
-            _notifyIcon.Dispose();
         }
     }
 }
