@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using KbHeatMap.Razer;
 
@@ -122,7 +123,14 @@ namespace KbHeatMap.Utils
 
         public static Constants.Key GetRazerKey(Keys key)
         {
-            return KeyMapping[key.ToString()];
+            try
+            {
+                return KeyMapping[key.ToString()];
+            }
+            catch (KeyNotFoundException)
+            {
+                return Constants.Key.Invalid;
+            }
         }
     }
 }

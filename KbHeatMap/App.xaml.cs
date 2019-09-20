@@ -16,7 +16,12 @@ namespace KbHeatMap
         private NotifyIcon _notifyIcon;
 
         public readonly ChromaService ChromaService = new ChromaService();
-        public readonly KeyboardService KeyboardService = new KeyboardService();
+        public readonly KeyboardService KeyboardService;
+
+        public App()
+        {
+            KeyboardService = new KeyboardService(ChromaService);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {

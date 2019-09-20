@@ -13,6 +13,7 @@ namespace KbHeatMap.Service
 {
     public class KeyboardService
     {
+        private readonly ChromaService _chromaService;
         private const string FileName = "data.json";
         private readonly Dictionary<Constants.Key, int> _pressCount;
 
@@ -20,8 +21,10 @@ namespace KbHeatMap.Service
 
         private Grid _grid = new Grid();
 
-        public KeyboardService()
+        public KeyboardService(ChromaService chromaService)
         {
+            _chromaService = chromaService;
+            _chromaService.SdkInit += ChromaServiceOnSdkInit;
             if (File.Exists(FileName))
             {
                 var tempDict = new JavaScriptSerializer()
@@ -37,6 +40,11 @@ namespace KbHeatMap.Service
             {
                 _pressCount = new Dictionary<Constants.Key, int>();
             }
+        }
+
+        private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
+        {
+
         }
 
         public void Subscribe()
@@ -63,6 +71,10 @@ namespace KbHeatMap.Service
             {
                 _pressCount[razerKey]++;
             }
+
+            _grid.SetAll(ChromaColor.Black);
+            _grid.Set(razerKey, ChromaColor.White);
+            _chromaService.Send(_grid, apply:true);
         }
 
         public void Save()

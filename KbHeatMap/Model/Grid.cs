@@ -26,6 +26,13 @@ namespace KbHeatMap.Model
             _grid[row, column] = color;
         }
 
+        public void Set(Razer.Constants.Key key, ChromaColor color)
+        {
+            var row = ((int) key >> 8) & 0xFF;
+            var column = (int) key & 0xFF;
+            Set(row, column, color);
+        }
+
         public void SetRow(int row, ChromaColor color)
         {
             if (row < 0 || row >= Constants.KbRows)

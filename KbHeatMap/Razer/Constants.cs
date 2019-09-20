@@ -484,31 +484,6 @@ namespace KbHeatMap.Razer
             RightShift = 0x040E,
 
             /// <summary>
-            /// Macro key 1.
-            /// </summary>
-            Macro1 = 0x0100,
-
-            /// <summary>
-            /// Macro key 2.
-            /// </summary>
-            Macro2 = 0x0200,
-
-            /// <summary>
-            /// Macro key 3.
-            /// </summary>
-            Macro3 = 0x0300,
-
-            /// <summary>
-            /// Macro key 4.
-            /// </summary>
-            Macro4 = 0x0400,
-
-            /// <summary>
-            /// Macro Key 5.
-            /// </summary>
-            Macro5 = 0x0500,
-
-            /// <summary>
             /// Tilde (~) key. 半角/全角.
             /// </summary>
             OemTilde = 0x0101,
@@ -563,16 +538,6 @@ namespace KbHeatMap.Razer
             /// Forwards slash (/) key.
             /// </summary>
             OemSlash = 0x040C,
-
-            /// <summary>
-            /// Pound sign (#) key.
-            /// </summary>
-            EurPound = 0x030D,
-
-            /// <summary>
-            /// Backslash (\) key.
-            /// </summary>
-            EurBackslash = 0x0402,
 
             /// <summary>
             /// Invalid key.
