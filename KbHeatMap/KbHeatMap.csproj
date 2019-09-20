@@ -71,8 +71,10 @@
     <Compile Include="Model\ChromaColor.cs" />
     <Compile Include="Model\Constants.cs" />
     <Compile Include="Model\Grid.cs" />
+    <Compile Include="Razer\Constants.cs" />
     <Compile Include="Service\ChromaService.cs" />
     <Compile Include="Service\KeyboardService.cs" />
+    <Compile Include="Utils\Mapping.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

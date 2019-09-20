@@ -5,15 +5,20 @@ using System.Linq;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
+using KbHeatMap.Model;
+using KbHeatMap.Utils;
+using Constants = KbHeatMap.Razer.Constants;
 
 namespace KbHeatMap.Service
 {
     public class KeyboardService
     {
         private const string FileName = "data.json";
-        private readonly Dictionary<Keys, int> _pressCount;
+        private readonly Dictionary<Constants.Key, int> _pressCount;
 
         private IKeyboardMouseEvents _globalHook;
+
+        private Grid _grid = new Grid();
 
         public KeyboardService()
         {
@@ -24,13 +29,13 @@ namespace KbHeatMap.Service
 
                 _pressCount = tempDict.ToDictionary(k =>
                 {
-                    Enum.TryParse(k.Key, out Keys key);
+                    Enum.TryParse(k.Key, out Constants.Key key);
                     return key;
                 }, k => k.Value);
             }
             else
             {
-                _pressCount = new Dictionary<Keys, int>();
+                _pressCount = new Dictionary<Constants.Key, int>();
             }
         }
 
@@ -49,14 +54,14 @@ namespace KbHeatMap.Service
         private void GlobalHookOnKeyPress(object sender, KeyEventArgs e)
         {
             Console.WriteLine($"{e.KeyCode} pressed.");
-
-            if (!_pressCount.ContainsKey(e.KeyCode))
+            var razerKey = Mapping.GetRazerKey(e.KeyCode);
+            if (!_pressCount.ContainsKey(razerKey))
             {
-                _pressCount.Add(e.KeyCode, 1);
+                _pressCount.Add(razerKey, 1);
             }
             else
             {
-                _pressCount[e.KeyCode]++;
+                _pressCount[razerKey]++;
             }
         }
 
