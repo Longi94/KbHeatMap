@@ -74,6 +74,7 @@
     <Compile Include="Razer\Constants.cs" />
     <Compile Include="Service\ChromaService.cs" />
     <Compile Include="Service\KeyboardService.cs" />
+    <Compile Include="Utils\HeatMap.cs" />
     <Compile Include="Utils\Mapping.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

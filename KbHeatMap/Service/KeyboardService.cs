@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Gma.System.MouseKeyHook;
 using KbHeatMap.Model;
 using KbHeatMap.Utils;
@@ -15,7 +16,10 @@ namespace KbHeatMap.Service
     {
         private readonly ChromaService _chromaService;
         private const string FileName = "data.json";
+
+        private int _max;
         private readonly Dictionary<Constants.Key, int> _pressCount;
+        private readonly ColorHeatMap _colorHeatMap = new ColorHeatMap();
 
         private IKeyboardMouseEvents _globalHook;
 
@@ -35,6 +39,8 @@ namespace KbHeatMap.Service
                     Enum.TryParse(k.Key, out Constants.Key key);
                     return key;
                 }, k => k.Value);
+
+                _max = _pressCount.Values.Max();
             }
             else
             {
@@ -44,7 +50,23 @@ namespace KbHeatMap.Service
 
         private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
         {
+            if (e.Initialized)
+            {
+                Update();
+            }
+        }
 
+        private void Update()
+        {
+            _grid.SetAll(ChromaColor.Blue);
+
+            foreach (var key in _pressCount)
+            {
+                var color = new ChromaColor(_colorHeatMap.GetColorForValue(key.Value, _max));
+                _grid.Set(key.Key, color);
+            }
+
+            _chromaService.Send(_grid, apply: true);
         }
 
         public void Subscribe()
@@ -72,9 +94,8 @@ namespace KbHeatMap.Service
                 _pressCount[razerKey]++;
             }
 
-            _grid.SetAll(ChromaColor.Black);
-            _grid.Set(razerKey, ChromaColor.White);
-            _chromaService.Send(_grid, apply:true);
+            _max = Math.Max(_max, _pressCount[razerKey]);
+            Update();
         }
 
         public void Save()
