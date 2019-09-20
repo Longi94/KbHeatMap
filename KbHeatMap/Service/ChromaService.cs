@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Timers;
 using KbHeatMap.Model;
-using log4net;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -10,9 +9,6 @@ namespace KbHeatMap.Service
 {
     public class ChromaService
     {
-        private static readonly ILog Log =
-            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public static readonly string MainUrl = "http://localhost:54235/razer/chromasdk";
 
         public static readonly Dictionary<string, object> AppInfo = new Dictionary<string, object>
@@ -66,7 +62,7 @@ namespace KbHeatMap.Service
         {
             if (Initialized) return;
 
-            Log.Info("Initializing Chroma SDK...");
+            Console.WriteLine("Initializing Chroma SDK...");
 
             var request = new RestRequest(Method.POST) { RequestFormat = DataFormat.Json };
             request.AddJsonBody(AppInfo);
@@ -79,14 +75,14 @@ namespace KbHeatMap.Service
                     _client = new RestClient(Uri);
                     Initialized = true;
                     _heartbeatTimer.Start();
-                    Log.Info("Initialized Chroma SDK");
+                    Console.WriteLine("Initialized Chroma SDK");
 
                     SdkInit?.Invoke(this, new SdkInitEvent { Initialized = Initialized });
                 }
                 else
                 {
-                    Log.Error("Failed to initialize SDK");
-                    Log.Error(response.ErrorMessage);
+                    Console.WriteLine("Failed to initialize SDK");
+                    Console.WriteLine(response.ErrorMessage);
                 }
             });
         }
@@ -98,7 +94,7 @@ namespace KbHeatMap.Service
         {
             if (!Initialized) return;
 
-            Log.Info("Uninitializing Chroma SDK...");
+            Console.WriteLine("Uninitializing Chroma SDK...");
             _heartbeatTimer.Stop();
 
             var request = new RestRequest(Method.DELETE);
@@ -110,12 +106,12 @@ namespace KbHeatMap.Service
                 SdkInit?.Invoke(this, new SdkInitEvent { Initialized = Initialized });
                 if (response.IsSuccessful && response.Data.Result == 0)
                 {
-                    Log.Info("Uninitialized Chroma SDK");
+                    Console.WriteLine("Uninitialized Chroma SDK");
                 }
                 else
                 {
-                    Log.Error("Failed to uninitialize SDK");
-                    Log.Error(response.IsSuccessful ? $"Returned code: {response.Data.Result}" : response.ErrorMessage);
+                    Console.WriteLine("Failed to uninitialize SDK");
+                    Console.WriteLine(response.IsSuccessful ? $"Returned code: {response.Data.Result}" : response.ErrorMessage);
                 }
             });
         }
@@ -134,12 +130,12 @@ namespace KbHeatMap.Service
 
             if (response.IsSuccessful)
             {
-                Log.Debug($"Chroma SDK heartbeat {response.Data.Tick}");
+                Console.WriteLine($"Chroma SDK heartbeat {response.Data.Tick}");
             }
             else
             {
-                Log.Error("Heartbeat failed");
-                Log.Error(response.ErrorMessage);
+                Console.WriteLine("Heartbeat failed");
+                Console.WriteLine(response.ErrorMessage);
             }
         }
 
@@ -185,8 +181,8 @@ namespace KbHeatMap.Service
                 }
                 else
                 {
-                    Log.Error("Failed to set custom effect");
-                    Log.Error(response.ErrorMessage);
+                    Console.WriteLine("Failed to set custom effect");
+                    Console.WriteLine(response.ErrorMessage);
                 }
             });
         }
@@ -205,8 +201,8 @@ namespace KbHeatMap.Service
             {
                 if (!response.IsSuccessful)
                 {
-                    Log.Error($"Failed to apply effect {id}");
-                    Log.Error(response.ErrorMessage);
+                    Console.WriteLine($"Failed to apply effect {id}");
+                    Console.WriteLine(response.ErrorMessage);
                 }
             });
         }
