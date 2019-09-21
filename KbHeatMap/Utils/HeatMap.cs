@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media;
+using Colore.Data;
 
 namespace KbHeatMap.Utils
 {
@@ -16,11 +16,11 @@ namespace KbHeatMap.Utils
         {
             ColorsOfMap.AddRange(new[]
             {
-                Color.FromRgb(0, 0, 0xFF), //Blue
-                Color.FromRgb(0, 0xFF, 0xFF), //Cyan
-                Color.FromRgb(0, 0xFF, 0), //Green
-                Color.FromRgb(0xFF, 0xFF, 0), //Yellow
-                Color.FromRgb(0xFF, 0, 0), //Red
+                new Color(0, 0, 0xFF), //Blue
+                new Color(0, 0xFF, 0xFF), //Cyan
+                new Color(0, 0xFF, 0), //Green
+                new Color(0xFF, 0xFF, 0), //Yellow
+                new Color(0xFF, 0, 0), //Red
             });
         }
 
@@ -33,7 +33,8 @@ namespace KbHeatMap.Utils
                 return ColorsOfMap.Last();
             }
 
-            double colorPercent = 1d / (ColorsOfMap.Count - 1); // % of each block of color. the last is the "100% Color"
+            double
+                colorPercent = 1d / (ColorsOfMap.Count - 1); // % of each block of color. the last is the "100% Color"
             double blockOfColor = valPercent / colorPercent; // the integer part repersents how many block to skip
             int blockIdx = (int) Math.Truncate(blockOfColor); // Idx of 
             double valPercentResidual = valPercent - (blockIdx * colorPercent); //remove the part represented of block 
@@ -53,7 +54,7 @@ namespace KbHeatMap.Utils
             Color c = ColorsOfMap[0];
             try
             {
-                c = Color.FromRgb((byte) r, (byte) g, (byte) b);
+                c = new Color((byte) r, (byte) g, (byte) b);
             }
             catch (Exception)
             {

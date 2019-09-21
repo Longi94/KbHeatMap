@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using Colore.Data;
+using Colore.Effects.Keyboard;
 using Gma.System.MouseKeyHook;
-using KbHeatMap.Model;
 using KbHeatMap.Utils;
-using Constants = KbHeatMap.Razer.Constants;
 
 namespace KbHeatMap.Service
 {
@@ -18,12 +19,12 @@ namespace KbHeatMap.Service
         private const string FileName = "data.json";
 
         private int _max;
-        private readonly Dictionary<Constants.Key, int> _pressCount;
+        private readonly Dictionary<Key, int> _pressCount;
         private readonly ColorHeatMap _colorHeatMap = new ColorHeatMap();
 
         private IKeyboardMouseEvents _globalHook;
 
-        private readonly Grid _grid = new Grid();
+        private KeyboardCustom _grid = KeyboardCustom.Create();
 
         private readonly System.Timers.Timer _saveTimer = new System.Timers.Timer { Interval = 18000000 };
 
@@ -39,7 +40,7 @@ namespace KbHeatMap.Service
 
                 _pressCount = tempDict.ToDictionary(k =>
                 {
-                    Enum.TryParse(k.Key, out Constants.Key key);
+                    Enum.TryParse(k.Key, out Key key);
                     return key;
                 }, k => k.Value);
 
@@ -47,7 +48,7 @@ namespace KbHeatMap.Service
             }
             else
             {
-                _pressCount = new Dictionary<Constants.Key, int>();
+                _pressCount = new Dictionary<Key, int>();
             }
         }
 
@@ -55,26 +56,25 @@ namespace KbHeatMap.Service
         {
             Save();
         }
-
         private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
         {
             if (e.Initialized)
             {
-                Update();
+                Task.Delay(TimeSpan.FromMilliseconds(500)).ContinueWith(task => Update());
             }
         }
 
         private void Update()
         {
-            _grid.SetAll(ChromaColor.Blue);
+            _grid.Set(Color.Blue);
 
             foreach (var key in _pressCount)
             {
-                var color = new ChromaColor(_colorHeatMap.GetColorForValue(key.Value, _max));
-                _grid.Set(key.Key, color);
+                var color =_colorHeatMap.GetColorForValue(key.Value, _max);
+                _grid[key.Key] = color;
             }
 
-            _chromaService.Send(_grid, apply: true);
+            _chromaService.Send(_grid);
         }
 
         public void Subscribe()
