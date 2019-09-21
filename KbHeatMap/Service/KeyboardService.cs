@@ -26,7 +26,7 @@ namespace KbHeatMap.Service
 
         private KeyboardCustom _grid = KeyboardCustom.Create();
 
-        private readonly System.Timers.Timer _saveTimer = new System.Timers.Timer { Interval = 18000000 };
+        private readonly System.Timers.Timer _saveTimer = new System.Timers.Timer {Interval = 18000000};
 
         public KeyboardService(ChromaService chromaService)
         {
@@ -56,6 +56,7 @@ namespace KbHeatMap.Service
         {
             Save();
         }
+
         private void ChromaServiceOnSdkInit(object sender, SdkInitEvent e)
         {
             if (e.Initialized)
@@ -70,7 +71,7 @@ namespace KbHeatMap.Service
 
             foreach (var key in _pressCount)
             {
-                var color =_colorHeatMap.GetColorForValue(key.Value, _max);
+                var color = _colorHeatMap.GetColorForValue(key.Value, _max);
                 _grid[key.Key] = color;
             }
 
@@ -95,17 +96,63 @@ namespace KbHeatMap.Service
         {
             Console.WriteLine($"{e.KeyCode} pressed.");
             var razerKey = Mapping.GetRazerKey(e.KeyCode);
-            if (!_pressCount.ContainsKey(razerKey))
+
+            if (razerKey == Key.Invalid)
             {
-                _pressCount.Add(razerKey, 1);
+                switch (e.KeyCode)
+                {
+                    case Keys.VolumeMute:
+                        IncrementKey(Key.F1);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.VolumeDown:
+                        IncrementKey(Key.F2);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.VolumeUp:
+                        IncrementKey(Key.F3);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.MediaPreviousTrack:
+                        IncrementKey(Key.F5);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.MediaPlayPause:
+                        IncrementKey(Key.F6);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.MediaNextTrack:
+                        IncrementKey(Key.F7);
+                        IncrementKey(Key.Function);
+                        break;
+                    case Keys.Sleep:
+                        IncrementKey(Key.Pause);
+                        IncrementKey(Key.Function);
+                        break;
+                    default:
+                        return;
+                }
             }
             else
             {
-                _pressCount[razerKey]++;
+                IncrementKey(razerKey);
             }
 
-            _max = Math.Max(_max, _pressCount[razerKey]);
             Update();
+        }
+
+        private void IncrementKey(Key key)
+        {
+            if (!_pressCount.ContainsKey(key))
+            {
+                _pressCount.Add(key, 1);
+            }
+            else
+            {
+                _pressCount[key]++;
+            }
+
+            _max = Math.Max(_max, _pressCount[key]);
         }
 
         public void Save()
