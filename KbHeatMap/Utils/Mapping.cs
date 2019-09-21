@@ -105,7 +105,8 @@ namespace KbHeatMap.Utils
             {"NumPad2", Key.Num2},
             {"NumPad3", Key.Num3},
             {"Next", Key.Num3},
-            {"Return", Key.NumEnter},
+            {"Return", Key.Enter}, // FIXME
+            //{"Return", Key.NumEnter},
             {"LControlKey", Key.LeftControl},
             {"LWin", Key.LeftWindows},
             {"LMenu", Key.LeftAlt},
