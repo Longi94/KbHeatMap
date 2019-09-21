@@ -61,9 +61,16 @@ namespace KbHeatMap
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
+            menu.Items.Add("ReInitialize SDK").Click += ReInitializeSdk;
             menu.Items.Add("Close").Click += (s, e) => ExitApp();
 
             _notifyIcon.ContextMenuStrip = menu;
+        }
+
+        private void ReInitializeSdk(object sender, EventArgs e)
+        {
+            ChromaService.UnInitialize();
+            ChromaService.Initialize();
         }
 
         private void OnExit(object sender, ExitEventArgs e)

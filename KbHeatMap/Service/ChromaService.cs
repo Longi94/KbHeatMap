@@ -11,6 +11,8 @@ namespace KbHeatMap.Service
         /// </summary>
         public event EventHandler<SdkInitEvent> SdkInit;
 
+        public event EventHandler<SdkUnInitEvent> SdkUnInit;
+
         public bool Initialized { get; private set; }
 
         private IChroma _chroma;
@@ -29,7 +31,8 @@ namespace KbHeatMap.Service
                     _chroma = task.Result;
                     Initialized = _chroma.Initialized;
                 }
-                SdkInit?.Invoke(this, new SdkInitEvent { Initialized = Initialized });
+
+                SdkInit?.Invoke(this, new SdkInitEvent {Initialized = Initialized});
             });
         }
 
@@ -40,7 +43,15 @@ namespace KbHeatMap.Service
                 return;
             }
 
-            _chroma?.UninitializeAsync();
+            if (_chroma == null)
+            {
+                SdkUnInit?.Invoke(this, new SdkUnInitEvent());
+            }
+            else
+            {
+                _chroma.UninitializeAsync().ContinueWith(task => SdkUnInit?.Invoke(this, new SdkUnInitEvent()));
+            }
+
             Initialized = false;
         }
 
@@ -58,5 +69,9 @@ namespace KbHeatMap.Service
     public class SdkInitEvent : EventArgs
     {
         public bool Initialized;
+    }
+
+    public class SdkUnInitEvent : EventArgs
+    {
     }
 }
