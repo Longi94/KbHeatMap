@@ -81,10 +81,12 @@ namespace KbHeatMap.Service
         {
             _globalHook = Hook.GlobalEvents();
             _globalHook.KeyDown += GlobalHookOnKeyPress;
+            _saveTimer.Start();
         }
 
         public void Unsubscribe()
         {
+            _saveTimer.Stop();
             _globalHook.KeyDown -= GlobalHookOnKeyPress;
             _globalHook.Dispose();
         }
